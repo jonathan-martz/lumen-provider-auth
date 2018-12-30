@@ -8,6 +8,8 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
+
+
 class AuthServiceProvider extends ServiceProvider{
     /**
      * Register any application services.
