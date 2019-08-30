@@ -45,22 +45,15 @@ class AuthServiceProvider extends ServiceProvider{
             $user = $users->first();
 
             if($count === 1){
-                $tokens = DB::connection('mysql.write')
+                $tokens = DB::connection('mysql.read')
                     ->table('auth_tokens')
                     ->where('UID','=',$user->id)
                     ->where('token','=',$request->input('auth.token'));
                 if($tokens->count() === 1){
                     return new User((array) $user);
                 }
-                else{
-                    $this->addMessage('error','Token doesnt exists.');
-                    return $this->getResponse();
-                }
             }
-            else{
-                $this->addMessage('error','User doesnt exists.');
-                return $this->getResponse();
-            }
+            return null;
 
         });
     }
