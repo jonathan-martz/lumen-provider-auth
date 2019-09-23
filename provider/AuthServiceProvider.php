@@ -50,13 +50,9 @@ class AuthServiceProvider extends ServiceProvider{
                 if($tokens->count() === 1){
                     return new User((array) $user);
                 }
-                else{
-                    return null;
-                }
             }
-            else{
-                return null;
-            }
+
+            return null;
 
         });
     }
