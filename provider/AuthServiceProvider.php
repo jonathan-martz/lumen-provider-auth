@@ -51,13 +51,11 @@ class AuthServiceProvider extends ServiceProvider{
                     return new User((array) $user);
                 }
                 else{
-                    $this->addMessage('error','Token doesnt exists.');
-                    return $this->getResponse();
+                    return null;
                 }
             }
             else{
-                $this->addMessage('error','User doesnt exists.');
-                return $this->getResponse();
+                return null;
             }
 
         });
