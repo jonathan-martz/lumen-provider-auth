@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\User;
+use App\Model\User;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\DB;
