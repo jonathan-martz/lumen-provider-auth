@@ -43,12 +43,14 @@ class AuthServiceProvider extends ServiceProvider{
 
             $user = $users->first();
 
-            if($count === 1){
-                $tokens = DB::table('auth_tokens')
-                    ->where('UID','=',$user->id)
-                    ->where('token','=',$request->input('auth.token'));
-                if($tokens->count() === 1){
-                    return new User((array) $user);
+            if($user->getActive() === true){
+                if($count === 1){
+                    $tokens = DB::table('auth_tokens')
+                        ->where('UID','=',$user->id)
+                        ->where('token','=',$request->input('auth.token'));
+                    if($tokens->count() === 1){
+                        return new User((array) $user);
+                    }
                 }
             }
 
