@@ -3,20 +3,20 @@
 namespace App\Providers;
 
 use App\Model\User;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
 
 
-
-class AuthServiceProvider extends ServiceProvider{
+class AuthServiceProvider extends ServiceProvider
+{
     /**
      * Register any application services.
      *
      * @return void
      */
-    public function register(){
+    public function register()
+    {
         //
     }
 
@@ -27,35 +27,44 @@ class AuthServiceProvider extends ServiceProvider{
      *
      * @return void
      */
-    public function boot(){
-        $this->app['auth']->viaRequest('api', function($request){
+    public function boot()
+    {
+        $this->app['auth']->viaRequest('api', function ($request) {
             $validator = Validator::make($request->all(), [
                 'auth.username' => 'required|string',
                 'auth.userid' => 'required|integer',
                 'auth.token' => 'required|string|size:512'
-            ])->validate();
+            ]);
 
-            $users = DB::table('users')
-                ->where('username','=',$request->input('auth.username'))
-                ->where('username_hash','=',sha1($request->input('auth.username')));
+            $messages = $validator->errors()->getMessages();
 
-            $count = $users->count();
+            if(!is_bool($messages)){
 
-            $user = $users->first();
+                $messages = (array) $messages;
+                $count = count($messages);
+                if($count === 0){
+                    $users = DB::table('users')
+                        ->where('username', '=', $request->input('auth.username'))
+                        ->where('username_hash', '=', sha1($request->input('auth.username')));
 
-            if($user->active === 1){
-                if($count === 1){
-                    $tokens = DB::table('auth_tokens')
-                        ->where('UID','=',$user->id)
-                        ->where('token','=',$request->input('auth.token'));
-                    if($tokens->count() === 1){
-                        return new User((array) $user);
+                    $count = $users->count();
+
+                    if($count === 1) {
+                        $user = new User((array)$users->first());
+                        if ($user->getActive() === 1) {
+                            $tokens = DB::table('auth_tokens')
+                                ->where('UID', '=', $user->getId())
+                                ->where('token', '=', $request->input('auth.token'));
+                            if ($tokens->count() === 1) {
+                                return $user;
+                            }
+
+                        }
                     }
                 }
             }
 
             return null;
-
         });
     }
 }
