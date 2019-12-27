@@ -51,14 +51,13 @@ class AuthServiceProvider extends ServiceProvider
 
                     if($count === 1) {
                         $user = new User((array)$users->first());
-                        if ($user->getActive() === 1) {
+                        if ($user->getActive()) {
                             $tokens = DB::table('auth_tokens')
-                                ->where('UID', '=', $user->getId())
+                                ->where('UID', '=', $user->getAuthIdentifier())
                                 ->where('token', '=', $request->input('auth.token'));
                             if ($tokens->count() === 1) {
                                 return $user;
                             }
-
                         }
                     }
                 }
